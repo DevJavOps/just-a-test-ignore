@@ -1,1 +1,38 @@
-  1
+name: Auto Commit
+
+on:
+  schedule:
+    - cron: "0 0/12 * * *"
+  push:
+    branches:
+      - main
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Make multiple changes and commit randomly
+        run: |
+          echo "Commit at $(date)" >> auto_commit.txt
+          git config --global user.name 'John Avella'
+          git config --global user.email 'DevJavOps@outlook.com'
+          
+          # Generate a random number between 1 and 10
+          num_commits=$((RANDOM % 10 + 1))
+          
+          # Commit the specified number of times
+          for ((i = 1; i <= num_commits; i++))
+          do
+            echo "Commit #$i at $(date)" >> auto_commit.txt
+            git add auto_commit.txt
+            git commit -m "Automated commit #$i"
+          done
+      
+      - name: Push changes
+        run: |
+          git push
